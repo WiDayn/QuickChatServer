@@ -1,5 +1,6 @@
 import Net.Handler;
 import Sql.MysqlConnection;
+import Utils.Utils;
 
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.*;
@@ -29,6 +30,7 @@ public class QuickChatServer {
 
 
     public static void main(String[] args) {
+
         MysqlConnection.connect();
 
         SSLServerSocket sslServerSocket = null;
