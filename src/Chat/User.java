@@ -43,4 +43,8 @@ public class User implements Serializable {
     public List<Room> getRoomList() {
         return roomList;
     }
+
+    public void setRoomList(List<Room> roomList){
+        this.roomList = roomList;
+    }
 }
