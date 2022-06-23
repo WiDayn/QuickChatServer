@@ -4,7 +4,7 @@ import java.sql.*;
 
 public class MysqlConnection {
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://localhost:3306/quickchat?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+    static final String DB_URL = "jdbc:mysql://localhost:3306/quickchat?useSSL=false&allowPublicKeyRetrieval=true&useTimezone=false&serverTimezone=Asia/Shanghai";
 
     static final String USER = "root";
     static final String PASS = "TqOMaR6zrMQUm3BG";
