@@ -1,6 +1,7 @@
 package Net;
 
 import Chat.Message;
+import Chat.PrivateMessage;
 import Chat.Room;
 import Chat.User;
 import Net.Feedback.*;
@@ -12,11 +13,8 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.sql.Timestamp;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class Handler implements Runnable{
@@ -166,6 +164,19 @@ public class Handler implements Runnable{
                         MysqlUtils.JoinRoom(pullRoomRequest.getUserid(), pullRoomRequest.getRoomId());
                         PullRoomFeedback pullRoomFeedback = new PullRoomFeedback(Utils.getNowTimestamp(), 200, "拉入成功");
                         SendObj(pullRoomFeedback);
+                    }
+                    if(obj instanceof SendPrivateMessageRequest sendPrivateMessageRequest){
+                        PrivateMessage privateMessage = sendPrivateMessageRequest.getPrivateMessage();
+                        MysqlUtils.AddPrivateMessage(privateMessage.getFrom_user(),
+                                privateMessage.getTo_user(),
+                                privateMessage.getMessage(),
+                                privateMessage.getSendTime());
+                    }
+                    if(obj instanceof QueryUnreadPrivateMessageRequest queryUnreadPrivateMessageRequest){
+                        // 这里会同时标记消息为已读
+                        List<PrivateMessage> privateMessageList = MysqlUtils.QueryPrivateMessageToUnread(queryUnreadPrivateMessageRequest.getUserid());
+                        QueryUnreadPrivateMessageFeedback queryUnreadPrivateMessageFeedback = new QueryUnreadPrivateMessageFeedback(Utils.getNowTimestamp(), privateMessageList);
+                        SendObj(queryUnreadPrivateMessageFeedback);
                     }
                 } catch (SocketException e) {
                     System.out.println("客户端断开连接:"+ e.getMessage());

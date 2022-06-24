@@ -1,6 +1,7 @@
 package Sql;
 
 import Chat.Message;
+import Chat.PrivateMessage;
 import Chat.Room;
 import Chat.User;
 import Utils.StaticConfig;
@@ -228,6 +229,104 @@ public class MysqlUtils {
             stmt = MysqlConnection.conn.createStatement();
             String sql;
             sql = "UPDATE `quickchat`.`user` SET lastactive = '"+ Utils.getNowTimestamp() +"' WHERE userid = '"+ userid +"'";
+            stmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        stmt.close();
+    }
+
+    public static void AddPrivateMessage(String from_user, String to_user, String message, Timestamp timestamp) throws SQLException {
+        Statement stmt = null;
+        try {
+            stmt = MysqlConnection.conn.createStatement();
+            String sql;
+            sql = "INSERT INTO `quickchat`.`private_message` (from_user, to_user, message, timestamp, isread)\n" +
+                    "VALUES ('"+ from_user +"', '"+ to_user +"', '"+ message +"', '"+ timestamp +"', 0);";
+            stmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        stmt.close();
+    }
+
+    public static List<PrivateMessage> QueryPrivateMessageFrom(String userid) throws SQLException {
+        // 返回所有来源是user的私密聊天
+        Statement stmt;
+        List<PrivateMessage> privateMessageList = new ArrayList<>();
+        try {
+            stmt = MysqlConnection.conn.createStatement();
+            String sql;
+            sql = "SELECT * FROM quickchat.private_message where from_user = '"+ userid +"';";
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()){
+                PrivateMessage privateMessage = new PrivateMessage(rs.getTimestamp("timestamp"),
+                        rs.getString("from_user"),
+                        rs.getString("to_user"),
+                        rs.getString("message"));
+                privateMessageList.add(privateMessage);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        stmt.close();
+        return privateMessageList;
+    }
+
+    public static List<PrivateMessage> QueryPrivateMessageTo(String userid) throws SQLException {
+        // 返回所有来源是user的私密聊天
+        Statement stmt;
+        List<PrivateMessage> privateMessageList = new ArrayList<>();
+        try {
+            stmt = MysqlConnection.conn.createStatement();
+            String sql;
+            sql = "SELECT * FROM quickchat.private_message where to_user = '"+ userid +"';";
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()){
+                PrivateMessage privateMessage = new PrivateMessage(rs.getTimestamp("timestamp"),
+                        rs.getString("from_user"),
+                        rs.getString("to_user"),
+                        rs.getString("message"));
+                privateMessageList.add(privateMessage);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        stmt.close();
+        return privateMessageList;
+    }
+
+    public static List<PrivateMessage> QueryPrivateMessageToUnread(String userid) throws SQLException {
+        // 返回所有来源是user的未读私密聊天
+        Statement stmt;
+        List<PrivateMessage> privateMessageList = new ArrayList<>();
+        try {
+            stmt = MysqlConnection.conn.createStatement();
+            String sql;
+            sql = "SELECT * FROM quickchat.private_message where to_user = '"+ userid +"' and isread = 0;";
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()){
+                PrivateMessage privateMessage = new PrivateMessage(rs.getTimestamp("timestamp"),
+                        rs.getString("from_user"),
+                        rs.getString("to_user"),
+                        rs.getString("message"));
+                privateMessageList.add(privateMessage);
+                // 标记为已读
+                UpdatePrivateMessageUnRead(rs.getInt("id"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        stmt.close();
+        return privateMessageList;
+    }
+
+    public static void UpdatePrivateMessageUnRead(int id) throws SQLException{
+        Statement stmt = null;
+        try {
+            stmt = MysqlConnection.conn.createStatement();
+            String sql;
+            sql = "UPDATE `quickchat`.`private_message` SET isread = 1 WHERE id = '"+ id +"'";
             stmt.executeUpdate(sql);
         } catch (SQLException e) {
             throw new RuntimeException(e);
