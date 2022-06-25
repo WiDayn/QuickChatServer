@@ -1,7 +1,6 @@
 package Net.Feedback;
 
 import Chat.Room;
-import Chat.User;
 
 import java.io.Serial;
 import java.io.Serializable;

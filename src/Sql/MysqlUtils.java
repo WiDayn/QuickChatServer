@@ -1,16 +1,10 @@
 package Sql;
 
-import Chat.Message;
-import Chat.PrivateMessage;
-import Chat.Room;
-import Chat.User;
+import Chat.*;
 import Utils.StaticConfig;
 import Utils.Utils;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -332,5 +326,41 @@ public class MysqlUtils {
             throw new RuntimeException(e);
         }
         stmt.close();
+    }
+
+    public static void AddFile(String filename, String realName, Timestamp timestamp, int roomid, Long size) throws SQLException {
+        Statement stmt;
+        try {
+            stmt = MysqlConnection.conn.createStatement();
+            String sql;
+            sql = "INSERT INTO `quickchat`.`files` (filename, realname, timestamp, roomid, size)\n" +
+                    "VALUES ('"+ filename +"', '"+ realName +"', '" + timestamp +"', '"+ roomid +"', '"+ size +"');";
+            stmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        stmt.close();
+    }
+
+    public static List<File> QueryFiles(int roomId) throws SQLException {
+        Statement stmt;
+        List<File> fileList = new ArrayList<>();
+        try {
+            stmt = MysqlConnection.conn.createStatement();
+            String sql;
+            sql = "SELECT * FROM quickchat.files where roomid = '"+ roomId +"'";
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()){
+                fileList.add(new File(rs.getString("filename"),
+                        rs.getString("realname"),
+                        rs.getTimestamp("timestamp"),
+                        rs.getInt("roomid"),
+                        rs.getLong("size")));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        stmt.close();
+        return fileList;
     }
 }

@@ -1,5 +1,6 @@
 package Net;
 
+import Chat.File;
 import Chat.Message;
 import Chat.PrivateMessage;
 import Chat.Room;
@@ -177,6 +178,11 @@ public class Handler implements Runnable{
                         List<PrivateMessage> privateMessageList = MysqlUtils.QueryPrivateMessageToUnread(queryUnreadPrivateMessageRequest.getUserid());
                         QueryUnreadPrivateMessageFeedback queryUnreadPrivateMessageFeedback = new QueryUnreadPrivateMessageFeedback(Utils.getNowTimestamp(), privateMessageList);
                         SendObj(queryUnreadPrivateMessageFeedback);
+                    }
+                    if(obj instanceof QueryFilesRequest queryFilesRequest){
+                        List<File> fileList = MysqlUtils.QueryFiles(queryFilesRequest.getRoomId());
+                        QueryFilesFeedback queryFilesFeedback = new QueryFilesFeedback(Utils.getNowTimestamp(), fileList);
+                        SendObj(queryFilesFeedback);
                     }
                 } catch (SocketException e) {
                     System.out.println("客户端断开连接:"+ e.getMessage());

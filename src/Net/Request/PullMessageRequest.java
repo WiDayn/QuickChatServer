@@ -3,7 +3,6 @@ package Net.Request;
 import Chat.Room;
 import java.io.*;
 import java.sql.Timestamp;
-import java.util.Date;
 
 public class PullMessageRequest extends Request{
     @Serial
