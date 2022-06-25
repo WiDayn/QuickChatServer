@@ -1,7 +1,6 @@
 package Net.Feedback;
 
-import java.io.Serial;
-import java.io.Serializable;
+import java.io.*;
 import java.sql.Timestamp;
 
 public class Feedback implements Serializable {
@@ -11,8 +10,17 @@ public class Feedback implements Serializable {
     private Timestamp sendTime;
     private String type;
 
+
     Feedback(Timestamp sendTime, String type){
         this.sendTime = sendTime;
         this.type = type;
+    }
+
+    public Timestamp getSendTime() {
+        return sendTime;
+    }
+
+    public String getType() {
+        return type;
     }
 }
