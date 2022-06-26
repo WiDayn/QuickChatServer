@@ -55,16 +55,16 @@ public class Handler implements Runnable{
                     if(request.getType().equals("Login")){
                         LoginRequest loginRequest = (LoginRequest) obj;
                         // 检查用户是否存在
-                        User user = MysqlUtils.QueryUser(loginRequest.getUser());
+                        User user = MysqlUtils.QueryUser(loginRequest.getUserid());
                         if(user == null){
                             LoginFeedback loginFeedback = new LoginFeedback(Utils.getNowTimestamp(), 401, "用户不存在", null);
                             SendObj(loginFeedback);
                             continue;
                         }
                         // 检查密码
-                        String password = MysqlUtils.QueryUserPassword(loginRequest.getUser());
+                        String password = MysqlUtils.QueryUserPassword(loginRequest.getUserid());
                         LoginFeedback loginFeedback;
-                        if(!password.equals(Utils.getShaPassword(loginRequest.getPassword(), loginRequest.getUser()))){
+                        if(!password.equals(Utils.getShaPassword(loginRequest.getPassword(), loginRequest.getUserid()))){
                             loginFeedback = new LoginFeedback(Utils.getNowTimestamp(), 401, "密码错误", null);
                             SendObj(loginFeedback);
                             continue;

@@ -1,7 +1,6 @@
 import Net.Handler;
-import Net.File.FileHandler;
+import Net.FileHandler;
 import Sql.MysqlConnection;
-import Utils.StaticConfig;
 
 import javax.net.ssl.*;
 import java.io.FileInputStream;

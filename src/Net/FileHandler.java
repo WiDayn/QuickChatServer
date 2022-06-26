@@ -1,4 +1,4 @@
-package Net.File;
+package Net;
 
 import Sql.MysqlUtils;
 import Utils.StaticConfig;
